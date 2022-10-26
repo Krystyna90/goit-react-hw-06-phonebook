@@ -6,12 +6,10 @@ import App from "./components/App";
 import { store, persistor } from "./redux/store";
 
 ReactDOM.render(
-  // <React.StrictMode>
   <Provider store={store}>
     <PersistGate loading={null} persistor={persistor}>
       <App></App>
     </PersistGate>
   </Provider>,
-  // </React.StrictMode>
   document.querySelector("#root")
 );
