@@ -1,15 +1,17 @@
-import { useState } from "react";
-import { nanoid } from "nanoid";
 import ContactForm from "./ContactForm/ContactForm";
 import ContactList from "./ContactList/ContactList";
 import Filter from "./Filter/Filter";
-import useLocalStorage from "../hooks/useLocalStorage";
+import { useSelector, useDispatch } from "react-redux";
+import { getContacts, getFilter } from "../redux/selectors";
+import { addContacts, removeContacts } from "../redux/contacts/contacts-slice";
+import { setFilter } from "../redux/filter/filter-slice";
 
 export default function App() {
-  const [contacts, setContacts] = useLocalStorage("contacts", []);
-  const [filter, setFilter] = useState("");
+  const contacts = useSelector(getContacts);
+  const filter = useSelector(getFilter);
+  const dispatch = useDispatch();
 
-  const addContact = (data) => {
+  const addContactInfo = (data) => {
     const addingUniqueName = contacts
       .map((contact) => contact.name.toLowerCase())
       .includes(data.name.toLowerCase());
@@ -17,17 +19,13 @@ export default function App() {
     if (addingUniqueName) {
       alert(`${data.name} is already in your phone book`);
     } else {
-      const contact = {
-        id: nanoid(),
-        name: data.name,
-        number: data.number,
-      };
-      setContacts((prevState) => [contact, ...prevState]);
+      const action = addContacts(data);
+      dispatch(action);
     }
   };
 
   const changeFilter = (e) => {
-    setFilter(e.currentTarget.value);
+    dispatch(setFilter(e.currentTarget.value));
   };
 
   const getFilteredContacts = () => {
@@ -38,15 +36,14 @@ export default function App() {
   };
 
   const deleteContact = (contactID) => {
-    setContacts((prevState) =>
-      prevState.filter((contact) => contact.id !== contactID)
-    );
+    const action = removeContacts(contactID);
+    dispatch(action);
   };
 
   return (
     <>
       <h1>Phonebook</h1>
-      <ContactForm onSubmit={addContact}></ContactForm>
+      <ContactForm onSubmit={addContactInfo}></ContactForm>
       <h2>Contacts</h2>
       <Filter value={filter} onChange={changeFilter}></Filter>
       <ContactList

@@ -30,6 +30,7 @@ export default function ContactForm({ onSubmit }) {
     setName("");
     setNumber("");
   };
+
   return (
     <form className={css.Contact_form} onSubmit={onSubmitForm}>
       <label className={css.Contact_label}>
