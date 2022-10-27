@@ -1,32 +1,15 @@
 import { useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import css from "./ContactForm.module.css";
-import { getContacts, getFilter } from "../../redux/selectors";
-import {
-  addContacts,
-  removeContacts,
-} from "../../redux/contacts/contacts-slice";
-import { setFilter } from "../../redux/filter/filter-slice";
-import ContactList from "../ContactList/ContactList";
-import Filter from "../Filter/Filter";
+import { getContacts } from "../../redux/selectors";
+import { addContacts } from "../../redux/contacts/contacts-slice";
 
 export default function ContactForm() {
   const contacts = useSelector(getContacts);
-  const filter = useSelector(getFilter);
   const dispatch = useDispatch();
 
   const [name, setName] = useState("");
-
   const [number, setNumber] = useState("");
-
-  const changeFilter = (e) => {
-    dispatch(setFilter(e.currentTarget.value));
-  };
-
-  const deleteContact = (contactID) => {
-    const action = removeContacts(contactID);
-    dispatch(action);
-  };
 
   const handleChange = (event) => {
     switch (event.target.name) {
@@ -54,17 +37,9 @@ export default function ContactForm() {
     } else {
       const action = addContacts({ name, number });
       dispatch(action);
+      setName("");
+      setNumber("");
     }
-
-    setName("");
-    setNumber("");
-  };
-
-  const getFilteredContacts = () => {
-    const normalizedFilter = filter.toLowerCase();
-    return contacts.filter((contact) =>
-      contact.name.toLowerCase().includes(normalizedFilter)
-    );
   };
 
   return (
@@ -103,11 +78,6 @@ export default function ContactForm() {
       </form>
 
       <h2>Contacts</h2>
-      <Filter value={filter} onChange={changeFilter}></Filter>
-      <ContactList
-        contacts={getFilteredContacts()}
-        onDeleteBtn={deleteContact}
-      ></ContactList>
     </>
   );
 }
